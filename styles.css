@@ -17,9 +17,9 @@ body {
 
 .display {
     height: 1.4cm;
-    width: 95%;
+    width: 93%;
     margin-bottom: 0.5cm;
-    padding-right: 5%;
+    padding-right: 7%;
     font-size: x-large;
     background-color: gray;
     display: flex;
