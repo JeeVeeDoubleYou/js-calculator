@@ -4,9 +4,11 @@ let operator = null
 let buttons = document.querySelectorAll(".btn");
 let display = document.getElementById("display");
 let warning = document.getElementById("warning");
-let screenText = display.textContent
 let message = ''
 let secondOperator = false
+let writingFirstNumber = false
+let writingSecondNumber = false
+let decimalIsInNumber = false
 
 buttons.forEach((button) => {
     let buttonText = button.textContent;
@@ -21,9 +23,7 @@ function toDisplayOrNotToDisplay (buttonText, cla, onlyDisplayed) {
         }
         else {
             display.textContent += buttonText
-        }
-            screenText = display.textContent
-        
+        }   
     }
 }
 
@@ -36,20 +36,36 @@ function dontWarn () {
 }
 
 function buttonClicked(buttonText, cla) {
+    dontWarn()
         if (cla.includes('number')){
-            if (firstNumber == null) {
+            if (firstNumber == null || writingFirstNumber) {
+                if (firstNumber == null) {
                     firstNumber = buttonText
                     toDisplayOrNotToDisplay(buttonText, cla, true)
-                    dontWarn()
-            }
-            else if (secondNumber == null) {
-                if (!(operator == null)) {
-                    secondNumber = buttonText
+                    writingFirstNumber = true
+                }
+                else if (writingFirstNumber) {
+                    firstNumber += buttonText
                     toDisplayOrNotToDisplay(buttonText, cla, false)
-                    dontWarn()
+                }
+
+            }
+            else if (secondNumber == null || writingSecondNumber) {
+                if (!(operator == null)) {
+                    if (secondNumber == null) {
+                        secondNumber = buttonText
+                        toDisplayOrNotToDisplay(buttonText, cla, false)
+                        writingSecondNumber = true
+                    }
+                    else if (writingSecondNumber) {
+                        secondNumber += buttonText
+                        toDisplayOrNotToDisplay(buttonText, cla, false)
+                    }
                 }
                 else {
-                    warn('Please pick the operator before picking the second number')
+                    writingFirstNumber = true
+                    firstNumber += buttonText
+                    display.textContent = firstNumber
                 }
             }
             else {
@@ -57,7 +73,26 @@ function buttonClicked(buttonText, cla) {
             }
             secondOperator = false
         }
+        if (cla.includes('decimal')){
+            if (decimalIsInNumber) {
+                warn("You can't add a second decimal point")
+                return
+            }
+            if (writingFirstNumber) {
+                firstNumber = firstNumber + '.'
+                display.textContent = firstNumber
+                decimalIsInNumber = true
+            }
+            if (writingSecondNumber) {
+                secondNumber = secondNumber + '.'
+                display.textContent = firstNumber + operator + secondNumber
+                decimalIsInNumber = true
+            }
+        }
         if (cla.includes('operator')){
+            writingFirstNumber = false
+            writingSecondNumber = false
+            decimalIsInNumber = false
             if (operator == null) {
                 if (firstNumber == null) {
                     warn('Please pick a number before picking the operator')
@@ -65,7 +100,6 @@ function buttonClicked(buttonText, cla) {
                 else {
                     operator = buttonText
                     toDisplayOrNotToDisplay(buttonText, cla, false)
-                    dontWarn()
                 }
             }
             if (!(firstNumber == null) && !(secondNumber == null) && !(operator == null)) {
@@ -77,6 +111,9 @@ function buttonClicked(buttonText, cla) {
             }
         }
         if (cla.includes('equal')){
+            writingFirstNumber = false
+            writingSecondNumber = false
+            decimalIsInNumber = false
             if (!(firstNumber == null) && !(secondNumber == null) && !(operator == null)) {
                 firstNumber = operate(firstNumber, secondNumber, operator)
                 display.textContent = firstNumber
@@ -86,14 +123,18 @@ function buttonClicked(buttonText, cla) {
             } 
         }
         if (cla.includes('AC')) {
+            writingFirstNumber = false
+            writingSecondNumber = false
+            decimalIsInNumber = false
             firstNumber = null
             secondNumber = null
             operator = null
             display.textContent = '0'
-            dontWarn()
         }
         if (cla.includes('justC')) {
-            dontWarn()
+            writingFirstNumber = false
+            writingSecondNumber = false
+            decimalIsInNumber = false
             if (secondOperator) {
                 display.textContent = firstNumber
                 operator = null
@@ -112,12 +153,14 @@ function buttonClicked(buttonText, cla) {
             }
         }
         if (cla.includes('percent')) {
+            writingFirstNumber = false
+            writingSecondNumber = false
+            decimalIsInNumber = false
             display.textContent = display.textContent / 100 
             firstNumber = Math.round(display.textContent * 10000) / 10000
             display.textContent = firstNumber
             secondNumber = null
             operator = null
-            dontWarn()
         }
         if (cla.includes('signchange')) {
             if (!(secondNumber == null)) {
@@ -169,11 +212,6 @@ function operate(a, b, op) {
     }
     secondNumber = null
     operator = null
-    dontWarn()
     answer = Math.round(answer * 10000) / 10000
     return answer
 }
-
-// TODO Pick multiple digit numbers
-// Style warning div
-// What to do if other buttons are clicked
