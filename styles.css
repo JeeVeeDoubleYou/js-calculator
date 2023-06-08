@@ -8,4 +8,38 @@ body {
     display: flex;
     flex-direction: column;
     background-color: purple;
+    height: 10cm;
+    width: 7cm;
+    justify-content: space-between;
+    padding: 1cm;
+    padding-top: 0.7cm;
+}
+
+.display {
+    height: 1.4cm;
+    width: 95%;
+    margin-bottom: 0.5cm;
+    padding-right: 5%;
+    font-size: x-large;
+    background-color: gray;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.line-of-buttons {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content:space-between;
+}
+
+button {
+    padding: 15px;
+    font-size: medium;
+    width: 1.5cm;
+}
+.equal {
+    width: 3.35cm;
 }
